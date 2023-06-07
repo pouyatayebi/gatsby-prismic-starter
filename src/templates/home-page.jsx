@@ -1,26 +1,28 @@
-import * as React from "react";
-import { Link, graphql } from "gatsby";
-
-import { withPrismicPreview } from "gatsby-plugin-prismic-previews";
-import Layout from "../components/layout";
-import Seo from "../components/seo";
-import Bio from "../components/bio";
+import * as React from "react"
+import { Link, graphql } from "gatsby"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
+import { withPrismicPreview } from "gatsby-plugin-prismic-previews"
+import Layout from "../components/layout"
+import Seo from "../components/seo"
+import Bio from "../components/bio"
 
 const HomePageTemplate = ({ data, location }) => {
   const {
     title,
     description,
     user_image: userImage,
-  } = data?.prismicHomePage?.data || {};
+  } = data?.prismicHomePage?.data || {}
 
-  const blogList = data?.allPrismicPost?.nodes || [];
-
+  const blogList = data?.allPrismicPost?.nodes || []
+  console.log("data", data)
+  const image = getImage(data.prismicHomePage.data.banner)
   return (
     <Layout location={location} title={title.text}>
+      <GatsbyImage image={image} alt={"main image"} />
       <Bio image={userImage} description={description.richText} />
       <ol style={{ listStyle: `none` }}>
-        {blogList.map((post) => {
-          const title = post.data.title.text;
+        {blogList.map(post => {
+          const title = post.data.title.text
 
           return (
             <li key={post.uid}>
@@ -40,23 +42,27 @@ const HomePageTemplate = ({ data, location }) => {
                 </header>
               </article>
             </li>
-          );
+          )
         })}
       </ol>
     </Layout>
-  );
-};
+  )
+}
 
 export const Head = ({ data }) => {
-  const { title, description } = data?.prismicHomePage?.data || {};
-  return <Seo title={title.text} description={description.text} />;
-};
+  const { title, description } = data?.prismicHomePage?.data || {}
+  return <Seo title={title.text} description={description.text} />
+}
 
 export const homePageQuery = graphql`
   query HomePageQuery {
     prismicHomePage {
       _previewable
       data {
+        banner {
+          alt
+          gatsbyImageData(layout: FULL_WIDTH)
+        }
         title {
           richText
           text
@@ -90,6 +96,6 @@ export const homePageQuery = graphql`
       }
     }
   }
-`;
+`
 
-export default withPrismicPreview(HomePageTemplate);
+export default withPrismicPreview(HomePageTemplate)
